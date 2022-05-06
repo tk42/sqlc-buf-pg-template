@@ -1,0 +1,10 @@
+version: v1
+plugins:
+  - name: go
+    out: gen/proto/golang
+  - name: go-grpc
+    out: gen/proto/golang
+    opt:
+      - require_unimplemented_servers=false
+  - name: python
+    out: gen/proto/python

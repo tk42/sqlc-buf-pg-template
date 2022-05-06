@@ -1,0 +1,9 @@
+version: v1
+lint:
+  use:
+    - DEFAULT
+  ignore:
+    - google/type/datetime.proto
+breaking:
+  use:
+    - FILE

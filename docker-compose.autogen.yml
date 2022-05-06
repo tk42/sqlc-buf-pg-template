@@ -1,0 +1,15 @@
+version: '3'
+services:
+  buf:
+    image: ghcr.io/tk42/bufbuild
+    volumes:
+      - ".:/workspace"
+    working_dir: "/workspace"
+    command: ["generate", "petapis"]
+
+  sqlc:
+    image: kjconroy/sqlc
+    volumes:
+      - ".:/src"
+    working_dir: "/src"
+    command: ["generate"]

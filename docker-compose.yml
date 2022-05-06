@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  server:
+    image: 'golang:latest'
+    volumes:
+      - ".:/home"
+    working_dir: "/home"
+    command: ["go", "run", "main.go"]
+    ports:
+      - 50051:50051
+    depends_on:
+      - db
+
+  grpcui:
+    image: 'wongnai/grpcui:latest'
+    environment:
+      - GRPCUI_SERVER=server:50051
+      - GRPCUI_PORT=8080
+    ports:
+      - 8080:8080
+    volumes:
+      - ./tool:/home
+    command: ["sh", "-c", "/home/wait-for-it.sh server:50051 -- /usr/local/scripts/start.sh"]
+    depends_on:
+      - server
+      - db
+      - grafana
+      - pgweb
+
+  db:
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=e8a48653851e28c69d0506508fb27fc5
+    ports:
+      - 5432:5432
+    volumes:
+      - "./postgres-data:/var/lib/postgresql/data"
+
+  pgweb:
+    image: 'sosedoff/pgweb:latest'
+    environment:
+      DATABASE_URL: postgres://postgres:e8a48653851e28c69d0506508fb27fc5@db:5432/postgres?sslmode=disable
+    depends_on:
+      - db
+    ports:
+      - 8081:8081
+    # volumes:
+    #   - ./tool:/home
+    # command: ["sh", "-c", "/home/wait-for-it.sh server:50051 -- /usr/bin/pgweb --bind=0.0.0.0 --listen=8081"]
+
+  grafana:
+    image: 'grafana/grafana:latest'
+    volumes:
+      - "./grafana/grafana.ini:/var/lib/grafana/grafana.ini"
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
