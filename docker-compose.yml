@@ -6,7 +6,7 @@ services:
     volumes:
       - ".:/home"
     working_dir: "/home"
-    command: ["go", "run", "main.go"]
+    command: ["go", "run", "."]
     ports:
       - 50051:50051
     depends_on:
@@ -31,9 +31,8 @@ services:
   db:
     image: 'postgres:latest'
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=e8a48653851e28c69d0506508fb27fc5
+    env_file:
+      - .env
     ports:
       - 5432:5432
     volumes:
@@ -50,11 +49,13 @@ services:
     # volumes:
     #   - ./tool:/home
     # command: ["sh", "-c", "/home/wait-for-it.sh server:50051 -- /usr/bin/pgweb --bind=0.0.0.0 --listen=8081"]
+    command: ["sh", "-c", "sleep 10; /usr/bin/pgweb --bind=0.0.0.0 --listen=8081"]
 
   grafana:
     image: 'grafana/grafana:latest'
     volumes:
-      - "./grafana/grafana.ini:/var/lib/grafana/grafana.ini"
+      - "./grafana/config:/var/lib/grafana"
+      - "./grafana/datasources:/etc/grafana/provisioning/datasources"
     depends_on:
       - db
     ports:

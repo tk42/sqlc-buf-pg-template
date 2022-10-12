@@ -8,7 +8,7 @@ services:
     command: ["generate", "petapis"]
 
   sqlc:
-    image: kjconroy/sqlc
+    image: kjconroy/sqlc:latest
     volumes:
       - ".:/src"
     working_dir: "/src"

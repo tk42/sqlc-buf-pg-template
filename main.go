@@ -10,22 +10,26 @@ import (
 
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
-	// "google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/reflection"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 func main() {
 	log.Print("server is starting...")
-	client, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
-		"db", "5432", "postgres", "postgres", "e8a48653851e28c69d0506508fb27fc5"))
+	client, err := sql.Open(
+		"pgx",
+		fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+			"db", "5432", "postgres", "postgres", "e8a48653851e28c69d0506508fb27fc5"))
 	if err != nil {
 		log.Fatalf("failed to connect to db: %s", err)
 	}
 	defer client.Close()
 
-	svc := bufbuild.PetStoreServiceServer(client)
+	svc := NewServiceServer(client)
 	server := grpc.NewServer()
 
-	// reflection.Register(server) // Failed to list services: server does not support the reflection API
+	reflection.Register(server) // Failed to list services: server does not support the reflection API
 	bufbuild.RegisterPetStoreServiceServer(server, svc)
 
 	lis, err := net.Listen("tcp", ":50051")

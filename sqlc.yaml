@@ -1,13 +1,15 @@
-version: 1
-packages:
-  - path: "gen/sqlc"
-    name: "pet"
-    engine: "postgresql"
-    schema: "petapis/schema.sql"
-    queries: "petapis/query.sql"
+version: 2
+sql:
+  - engine: "postgresql"
+    schema: "petapis/schema"
+    queries: "petapis/query"
+    gen:
+      go:
+        package: "petapis"
+        out: "gen/sqlc"
 
-    emit_json_tags: true
-    emit_prepared_queries: false
-    emit_interface: true
-    emit_exact_table_names: false
-    emit_empty_slices: true
+    # emit_json_tags: true
+    # emit_prepared_queries: false
+    # emit_interface: true
+    # emit_exact_table_names: false
+    # emit_empty_slices: true

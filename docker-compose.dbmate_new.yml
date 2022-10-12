@@ -1,0 +1,9 @@
+version: '3'
+services:
+  dbmate_new:
+    image: 'ghcr.io/amacneil/dbmate:latest'
+    environment:
+      - DBMATE_MIGRATIONS_DIR=/db/migrations
+    command: ["new", "create_entries_table"]
+    volumes:
+      - "./petapis:/db"
